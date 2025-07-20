@@ -4,99 +4,134 @@
   <meta charset="UTF-8">
   <title>Pepper Recommender</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/jquery-1.11.0.min.js"></script>
-  <script>
-    function subscribe_PepperQiMessaging() { console.log('🔧 [MOCK] subscribe'); }
-    window.session = {
-      service: () => ({ done: cb => cb({ raiseEvent:(e,d)=>console.log(`🔧 [MOCK] ${e}`, d) }) })
-    };
-  </script>
   <style>
-    html, body { margin:0; padding:0; overflow:hidden; width:100%; height:100%; }
-    #container { width:100vw; height:100vh; position:relative; }
-    iframe {
-      display:none;
-      position:fixed; top:0; left:0;
+    /* --- RESET CHUNG --- */
+    html, body {
+      margin:0; padding:0;
+      width:100%; height:100%;
+      overflow:hidden;
+      font-family: sans-serif;
+    }
+    .screen {
+      position: fixed; top:0; left:0;
       width:100vw; height:100vh;
-      border:none; margin:0; padding:0;
-      z-index:999;
+      display: none;
+    }
+    #mainScreen     { z-index:3; display:flex; flex-direction:column; justify-content:center; align-items:center; }
+    #chitchatScreen { z-index:2; background:#000; display:flex; justify-content:center; align-items:center; }
+    #messageScreen  { z-index:1; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:20px; box-sizing:border-box; }
+    #messageScreen::before {
+      content:""; position:absolute; top:0; left:0;
+      width:100%; height:100%;
+      background:url('img/sad.png') center/cover fixed;
+      filter:blur(4px) brightness(0.4); z-index:0;
+    }
+    #messageScreen.face-bg::before {
+      background:url('img/face.png') center/cover fixed;
+      filter:blur(4px) brightness(0.4);
+    }
+    #messageText {
+      position:relative; z-index:1;
+      font-size:clamp(1rem,2.5vw,2.5rem);
+      line-height:1.4; color:#00ffe8;
+      background:rgba(0,0,0,0.4); backdrop-filter:blur(6px);
+      padding:1rem 1.5rem; border-radius:.75rem;
+      max-width:80%; text-align:center; white-space:pre-wrap; margin-bottom:2rem;
+    }
+    #chitchatScreen img {
+      width:100vw; height:100vh; object-fit:contain;
+    }
+    .flex-area {
+      position:absolute; bottom:10%; left:50%;
+      transform:translateX(-50%);
+      display:flex; gap:20px;
+    }
+    .custom-yes-btn {
+      padding:1rem 2rem; background:#0081AF; color:#fff;
+      border:none; border-radius:.5rem; cursor:pointer;
     }
   </style>
 </head>
-<body onload="subscribe_PepperQiMessaging();">
-  <div id="container">
-    <div style="position:absolute; top:10px; right:10px; cursor:pointer;"
-         onclick="stopChitchat()">
+<body>
+  <!-- MÀN CHÍNH -->
+  <div id="mainScreen" class="screen">
+    <div style="position:absolute; top:10px; right:10px; cursor:pointer;" onclick="stopAll()">
       <i class="fa-solid fa-circle-question" style="color:#0081AF;"></i>
     </div>
-    <div style="text-align:center; margin-top:20vh; margin-bottom:15%;">
-      <h1 id="display" class="headline">
-        Xin chào, bạn có muốn trò chuyện một lúc không?
-      </h1>
-    </div>
-    <div class="flex-area"
-         style="position:absolute; bottom:10%; left:50%; transform:translateX(-50%);
-                display:flex; gap:20px;">
-      <button id="startChitBtn" class="custom-yes-btn bubble-bottom-right">
-        Start Chitchat
-      </button>
+    <h1 id="display" class="headline">
+      Xin chào, bạn có muốn trò chuyện một lúc không?
+    </h1>
+    <div class="flex-area">
+      <button id="startBtn" class="custom-yes-btn">Start Chitchat</button>
     </div>
   </div>
 
-  <iframe src="chitchat.html" id="chitchatScreen"></iframe>
-  <iframe src="message.html"    id="messageScreen"></iframe>
+  <!-- MÀN CHITCHAT -->
+  <div id="chitchatScreen" class="screen">
+    <img src="img/image.png" alt="Chitchat GIF">
+  </div>
 
-  <script src="https://kit.fontawesome.com/54a1468923.js" crossorigin="anonymous"></script>
+  <!-- MÀN MESSAGE -->
+  <div id="messageScreen" class="screen">
+    <p id="messageText"></p>
+  </div>
+
   <script>
-    const main = document.getElementById('container');
-    const chit = document.getElementById('chitchatScreen');
-    const msg  = document.getElementById('messageScreen');
-    let cycleCount = 0;  // đếm số lần đã show message
+    const messages = [
+      "Tôi hiểu rằng bạn đang cảm thấy rất buồn và thất vọng. Điều này thật sự khó khăn, nhưng nhớ rằng đôi khi chúng ta cần phải nghỉ ngơi để lấy lại năng lượng và tinh thần. Bạn hoàn toàn xứng đáng có một khoảng thời gian để hồi phục.",
+      "Khi công việc dồn dập, chúng ta dễ cảm thấy bực bội. Một trong những cách hiệu quả để giảm bớt cảm giác này là chia nhỏ công việc thành những nhiệm vụ nhỏ hơn, việc hoàn thành từng phần công việc nhỏ sẽ giúp bạn cảm thấy dễ chịu hơn. Bạn cũng có thể thử đặt ra một khoảng thời gian cụ thể để nghỉ ngơi giữa các công việc, điều này đã được nhiều chuyên gia tâm lý khuyên dùng để giảm căng thẳng."
+    ];
+    let idx = 0, timers = [];
 
-    function startChitchat() {
-      main.style.display = 'none';
-      chit.style.display = 'block';
-
-      setTimeout(() => {
-        chit.style.display = 'none';
-        msg.style.display  = 'block';
-        // bảo message.html bắt đầu show message[msgIndex]
-        msg.contentWindow.postMessage({ type: 'start-message' }, '*');
-      }, 10000);
+    function clearTimers() {
+      timers.forEach(t => clearTimeout(t));
+      timers = [];
+    }
+    function show(id) {
+      document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+      document.getElementById(id).style.display = 'flex';
     }
 
-    document.getElementById('startChitBtn').addEventListener('click', startChitchat);
-
-    // tự động 3s sau load
-    window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(startChitchat, 3000);
-    });
-
-    function stopChitchat() {
-      msg.style.display  = 'none';
-      chit.style.display = 'none';
-      main.style.display = 'block';
-      cycleCount = 0;
+    function startPipeline() {
+      clearTimers();
+      idx = 0;
+      // 3s → chitchat
+      timers.push(setTimeout(() => {
+        show('chitchatScreen');
+        // 10s → message1
+        timers.push(setTimeout(() => showMessage(0), 10000));
+      }, 3000));
     }
 
-    window.addEventListener('message', e => {
-      if (e.data && e.data.type === 'next-screen') {
-        cycleCount++;
-        // quay lại chitchat
-        msg.style.display  = 'none';
-        chit.style.display = 'block';
-
-        if (cycleCount < 2) {
-          // tiếp tục chu kỳ cho lần thứ 2
-          setTimeout(() => {
-            chit.style.display = 'none';
-            msg.style.display  = 'block';
-            msg.contentWindow.postMessage({ type: 'start-message' }, '*');
-          }, 10000);
+    function showMessage(i) {
+      const scr = document.getElementById('messageScreen');
+      const txt = document.getElementById('messageText');
+      txt.textContent = messages[i];
+      scr.classList.toggle('face-bg', i === 1);
+      show('messageScreen');
+      // 7s → tiếp
+      timers.push(setTimeout(() => {
+        if (i === 0) {
+          show('chitchatScreen');
+          timers.push(setTimeout(() => showMessage(1), 10000));
+        } else {
+          show('chitchatScreen');
         }
-      }
+      }, 7000));
+    }
+
+    document.getElementById('startBtn').onclick = startPipeline;
+    // show main lúc đầu
+    show('mainScreen');
+    // **TỰ ĐỘNG 3s sau load** nếu chưa click
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(startPipeline, 3000);
     });
+
+    function stopAll() {
+      clearTimers();
+      show('mainScreen');
+    }
   </script>
 </body>
 </html>

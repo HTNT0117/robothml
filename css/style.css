@@ -5,6 +5,32 @@ body {
   flex-direction: column;
 }
 
+.screen {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  display: none;
+  z-index: 1;        /* mặc định cho tất cả màn */
+}
+
+#mainScreen {
+  z-index: 3;        /* luôn ở trên cùng khi hiển thị */
+}
+
+#chitchatScreen {
+  z-index: 2;        /* giữa main và message */
+}
+
+#messageScreen {
+  z-index: 1;        /* dưới chitchat, dưới main */
+}
+
+/* pseudo-element nền của message */
+#messageScreen::before {
+  z-index: 0;
+}
+
+
 .bubble-bottom-right:before {
 
   content: "";
