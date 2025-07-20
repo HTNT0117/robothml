@@ -4,41 +4,30 @@
   <meta charset="UTF-8">
   <title>Pepper Recommender</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-
   <link rel="stylesheet" href="css/style.css">
   <script src="js/jquery-1.11.0.min.js"></script>
   <script>
     function subscribe_PepperQiMessaging() { console.log('🔧 [MOCK] subscribe'); }
     window.session = {
-      service: () => ({
-        done: cb => cb({ raiseEvent: (e,d) => console.log(`🔧 [MOCK] ${e}`, d) })
-      })
+      service: () => ({ done: cb => cb({ raiseEvent:(e,d)=>console.log(`🔧 [MOCK] ${e}`, d) }) })
     };
   </script>
-
   <style>
-    html, body {
-      margin: 0; padding: 0;
-      overflow: hidden;
-      width: 100%; height: 100%;
-    }
-    #container {
-      width: 100vw; height: 100vh;
-      position: relative; overflow: hidden;
-    }
-    #chitchatScreen,
-    #messageScreen {
-      display: none;
-      position: fixed; top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      border: none; margin: 0; padding: 0;
-      z-index: 999;
+    html, body { margin:0; padding:0; overflow:hidden; width:100%; height:100%; }
+    #container { width:100vw; height:100vh; position:relative; }
+    iframe {
+      display:none;
+      position:fixed; top:0; left:0;
+      width:100vw; height:100vh;
+      border:none; margin:0; padding:0;
+      z-index:999;
     }
   </style>
 </head>
 <body onload="subscribe_PepperQiMessaging();">
   <div id="container">
-    <div style="position:absolute; top:10px; right:10px; cursor:pointer;" onclick="stopChitchat()">
+    <div style="position:absolute; top:10px; right:10px; cursor:pointer;"
+         onclick="stopChitchat()">
       <i class="fa-solid fa-circle-question" style="color:#0081AF;"></i>
     </div>
     <div style="text-align:center; margin-top:20vh; margin-bottom:15%;">
@@ -63,22 +52,23 @@
     const main = document.getElementById('container');
     const chit = document.getElementById('chitchatScreen');
     const msg  = document.getElementById('messageScreen');
+    let cycleCount = 0;  // đếm số lần đã show message
 
-    // Gom logic show/hide vào 1 hàm để dễ tái sử dụng
     function startChitchat() {
       main.style.display = 'none';
       chit.style.display = 'block';
-      // 10s sau ẩn chitchat, hiện message
+
       setTimeout(() => {
         chit.style.display = 'none';
         msg.style.display  = 'block';
+        // bảo message.html bắt đầu show message[msgIndex]
+        msg.contentWindow.postMessage({ type: 'start-message' }, '*');
       }, 10000);
     }
 
-    // Khi click cũng chạy
     document.getElementById('startChitBtn').addEventListener('click', startChitchat);
 
-    // Tự động 3s sau load thì chạy
+    // tự động 3s sau load
     window.addEventListener('DOMContentLoaded', () => {
       setTimeout(startChitchat, 3000);
     });
@@ -87,17 +77,24 @@
       msg.style.display  = 'none';
       chit.style.display = 'none';
       main.style.display = 'block';
+      cycleCount = 0;
     }
 
-    // Lắng nghe postMessage để quay lại chitchat và tiếp chu kỳ
     window.addEventListener('message', e => {
       if (e.data && e.data.type === 'next-screen') {
+        cycleCount++;
+        // quay lại chitchat
         msg.style.display  = 'none';
         chit.style.display = 'block';
-        setTimeout(() => {
-          chit.style.display = 'none';
-          msg.style.display  = 'block';
-        }, 10000);
+
+        if (cycleCount < 2) {
+          // tiếp tục chu kỳ cho lần thứ 2
+          setTimeout(() => {
+            chit.style.display = 'none';
+            msg.style.display  = 'block';
+            msg.contentWindow.postMessage({ type: 'start-message' }, '*');
+          }, 10000);
+        }
       }
     });
   </script>
