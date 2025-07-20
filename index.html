@@ -5,101 +5,38 @@
   <title>Pepper Recommender</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- style chính -->
   <link rel="stylesheet" href="css/style.css">
   <script src="js/jquery-1.11.0.min.js"></script>
   <script>
     function subscribe_PepperQiMessaging() { console.log('🔧 [MOCK] subscribe'); }
-    window.session = { service:()=>({ done: cb => cb({ raiseEvent:(e,d)=>console.log(`🔧 [MOCK] ${e}`, d) }) }) };
+    window.session = {
+      service: () => ({
+        done: cb => cb({ raiseEvent: (e,d) => console.log(`🔧 [MOCK] ${e}`, d) })
+      })
+    };
   </script>
 
   <style>
-    /* container chính */
+    html, body {
+      margin: 0; padding: 0;
+      overflow: hidden;
+      width: 100%; height: 100%;
+    }
     #container {
-      width:100vw; height:100vh;
-      position:relative; overflow:hidden;
+      width: 100vw; height: 100vh;
+      position: relative; overflow: hidden;
     }
-
-    /* GIF full-screen */
-    #chitchatScreen {
-      display:none;
-      position:fixed; top:0; left:0;
-      width:100vw; height:100vh;
-      background:#000; z-index:999;
-    }
-    #chitchatScreen img {
-      width:100%; height:100%; object-fit:cover;
-    }
-
-    /* Message full-screen */
+    #chitchatScreen,
     #messageScreen {
-      display: none;      /* Ẩn mặc định */
-      position: fixed; top:0; left:0;
-      width:100vw; height:100vh;
-      z-index:1000;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      padding:20px;
-      box-sizing:border-box;
-    }
-    /* nền sad.gif mặc định */
-    #messageScreen::before {
-      content:"";
-      position:absolute; top:0; left:0;
-      width:100%; height:100%;
-      background: url('img/sad.png') no-repeat center center fixed;
-      background-size:cover;
-      filter: blur(4px) brightness(0.4);
-      z-index:0;
-    }
-    /* khi có class face-bg thì dùng face.gif */
-    #messageScreen.face-bg::before {
-      background: url('img/face.png') no-repeat center center fixed;
-      background-size:cover;
-      filter: blur(4px) brightness(0.4);
-    }
-
-    /* Text neon */
-    #messageText {
-      position:relative; z-index:1;
-      font-size: clamp(1rem,2.5vw,2.5rem);
-      line-height:1.4;
-      color:#00ffe8;
-      text-shadow:
-        0 0 8px rgba(0,255,232,0.8),
-        0 0 16px rgba(0,255,232,0.6);
-      background:rgba(0,0,0,0.4);
-      backdrop-filter:blur(6px);
-      padding:1rem 1.5rem;
-      border-radius:0.75rem;
-      max-width:80%;
-      text-align:center;
-      white-space:pre-wrap;
-      margin-bottom:2rem;
-    }
-
-    /* Nút quay lại góc trái */
-    .flex-top {
-      position: fixed;
-      top: 20px;
-      left: 20px;
-      z-index: 1001;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      cursor: pointer;
-    }
-    .flex-top i { color:#0081AF; }
-    .flex-top p {
-      color:#0081AF;
-      margin:0;
-      font-size:1rem;
+      display: none;
+      position: fixed; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      border: none; margin: 0; padding: 0;
+      z-index: 999;
     }
   </style>
 </head>
 <body onload="subscribe_PepperQiMessaging();">
-  <!-- giao diện chính -->
   <div id="container">
     <div style="position:absolute; top:10px; right:10px; cursor:pointer;" onclick="stopChitchat()">
       <i class="fa-solid fa-circle-question" style="color:#0081AF;"></i>
@@ -110,85 +47,58 @@
       </h1>
     </div>
     <div class="flex-area"
-         style="position:absolute; bottom:10%; left:50%; transform:translateX(-50%); display:flex; gap:20px;">
+         style="position:absolute; bottom:10%; left:50%; transform:translateX(-50%);
+                display:flex; gap:20px;">
       <button id="startChitBtn" class="custom-yes-btn bubble-bottom-right">
         Start Chitchat
       </button>
     </div>
   </div>
 
-  <!-- GIF full-screen -->
-  <div id="chitchatScreen">
-    <img src="img/image.png" alt="Chitchat GIF">
-  </div>
+  <iframe src="chitchat.html" id="chitchatScreen"></iframe>
+  <iframe src="message.html"    id="messageScreen"></iframe>
 
-  <!-- Message full-screen -->
-  <div id="messageScreen">
-    <p id="messageText" class="long-text"></p>
-    <div class="flex-top" onclick="stopChitchat()">
-      <i class="fa-solid fa-angle-left fa-6x"></i>
-      <p>Quay lại</p>
-    </div>
-  </div>
-
-  <!-- scripts -->
   <script src="https://kit.fontawesome.com/54a1468923.js" crossorigin="anonymous"></script>
   <script>
-    const messages = [
-      "Tôi hiểu rằng bạn đang cảm thấy rất buồn và thất vọng. Điều này thật sự khó khăn, nhưng nhớ rằng đôi khi chúng ta cần phải nghỉ ngơi để lấy lại năng lượng và tinh thần. Bạn hoàn toàn xứng đáng có một khoảng thời gian để hồi phục.",
-      "Khi công việc dồn dập, chúng ta dễ cảm thấy bực bội. Một trong những cách hiệu quả để giảm bớt cảm giác này là chia nhỏ công việc thành những nhiệm vụ nhỏ hơn, việc hoàn thành từng phần công việc nhỏ sẽ giúp bạn cảm thấy dễ chịu hơn. Bạn cũng có thể thử đặt ra một khoảng thời gian cụ thể để nghỉ ngơi giữa các công việc, điều này đã được nhiều chuyên gia tâm lý khuyên dùng để giảm căng thẳng."
-    ];
-    let msgIndex = 0;
+    const main = document.getElementById('container');
+    const chit = document.getElementById('chitchatScreen');
+    const msg  = document.getElementById('messageScreen');
 
+    // Gom logic show/hide vào 1 hàm để dễ tái sử dụng
     function startChitchat() {
-      document.getElementById('container').style.display = 'none';
-      document.getElementById('chitchatScreen').style.display = 'block';
-      msgIndex = 0;
-      setTimeout(showMessage, 10000);
+      main.style.display = 'none';
+      chit.style.display = 'block';
+      // 10s sau ẩn chitchat, hiện message
+      setTimeout(() => {
+        chit.style.display = 'none';
+        msg.style.display  = 'block';
+      }, 10000);
     }
 
-    function showMessage() {
-      const chit = document.getElementById('chitchatScreen'),
-            msgS = document.getElementById('messageScreen'),
-            el   = document.getElementById('messageText');
+    // Khi click cũng chạy
+    document.getElementById('startChitBtn').addEventListener('click', startChitchat);
 
-      // đổi background nếu message thứ 2
-      if (msgIndex === 1) {
-        msgS.classList.add('face-bg');
-      } else {
-        msgS.classList.remove('face-bg');
-      }
-
-      chit.style.display = 'none';
-      msgS.style.display = 'flex';    // bật flex
-      el.textContent = '';
-
-      const text = messages[msgIndex];
-      let i=0, speed=50;
-      (function typeChar(){
-        if (i < text.length) {
-          el.textContent += text.charAt(i++);
-          setTimeout(typeChar, speed);
-        } else if (msgIndex < messages.length - 1) {
-          setTimeout(() => {
-            msgS.style.display = 'none';
-            chit.style.display = 'block';
-            msgIndex++;
-            setTimeout(showMessage, 10000);
-          }, 3000);
-        }
-      })();
-    }
+    // Tự động 3s sau load thì chạy
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(startChitchat, 3000);
+    });
 
     function stopChitchat() {
-      document.getElementById('messageScreen').style.display = 'none';
-      document.getElementById('chitchatScreen').style.display = 'none';
-      document.getElementById('container').style.display = 'block';
+      msg.style.display  = 'none';
+      chit.style.display = 'none';
+      main.style.display = 'block';
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('startChitBtn')
-              .addEventListener('click', startChitchat);
+    // Lắng nghe postMessage để quay lại chitchat và tiếp chu kỳ
+    window.addEventListener('message', e => {
+      if (e.data && e.data.type === 'next-screen') {
+        msg.style.display  = 'none';
+        chit.style.display = 'block';
+        setTimeout(() => {
+          chit.style.display = 'none';
+          msg.style.display  = 'block';
+        }, 10000);
+      }
     });
   </script>
 </body>
