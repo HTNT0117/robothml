@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Pepper Recommender</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/main.js"></script>
+</head>
+
+<body  onload="subscribe_last_answer();">
+    <div id="container" id='toDialog'>        
+        <div class="flex-area">
+            <button  id="pos" class="custom-yes-btn bubble-bottom-right"  onclick="go_to_food_recommender(); "> 
+                Food Recommender
+            </button>
+    
+            <button id="neg" class="custom-no-btn bubble-bottom-right" onclick="previous_topic()"> 
+                Previous Question
+            </button>
+
+        </div>
+        <div align="center" style="margin-bottom:5%;">
+            <h1 id="display" class="headline" >
+                Let's talk together!
+            </h1>
+        </div>
+    </div>
+    
+    <footer>
+    </footer>
+    <script src="https://kit.fontawesome.com/54a1468923.js" crossorigin="anonymous"></script>
+    <script src="js/robotutils.qim1.js"></script>
+    <script src="/libs/qimessaging/2/qimessaging.js"></script>
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="js/robotutils.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>

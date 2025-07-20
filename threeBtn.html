@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Pepper Recommender</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body  onload="subscribe_PepperQiMessaging();">
+    <div id="container" id='toDialog'>
+
+        <div class="flex-area">
+            <div class="flex-top" onclick="previous_topic()">
+                <i style="color:#0081AF;" class="fa-solid fa-angle-left fa-6x"></i>
+                <p style="color:#0081AF; margin-top:38px;">Go to Previous Question</p>
+            </div>
+            <button class="custom-stop-btn top-button" onclick="stopTalking()"> 
+                Stop Talking
+            </button>
+        </div>
+        
+        <div align="center" style="margin-bottom:5%;">
+            <h1 id="display" class="headline" >Which one would you prefer?</h1>
+        </div>
+        <div class="flex-area">
+            <button  id="fir" class="custom-yes-btn bubble-bottom-right"  onclick="first_ans(); "> 
+                matcha
+            </button>
+    
+            <button id="sec" class="custom-yes-btn bubble-bottom-right" onclick="sen_ans()"> 
+                turmeric
+            </button>
+
+            <button  id="thir" class="custom-yes-btn bubble-bottom-right"  onclick="thir_ans(); "> 
+                chai
+            </button>
+
+        </div>
+    </div>
+    
+    <footer>
+    </footer>
+    <script src="https://kit.fontawesome.com/54a1468923.js" crossorigin="anonymous"></script>
+    <script src="js/robotutils.qim1.js"></script>
+    <script src="/libs/qimessaging/2/qimessaging.js"></script>
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="js/robotutils.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+
+<script>
+    $(document).ready(function(){
+
+        var my_param = getUrlParameter('text');
+        var first_btn = getUrlParameter('fir');
+        var sec_btn = getUrlParameter('sec');
+        var thir_btn = getUrlParameter('thir');
+        $('#display').text(my_param);
+        document.getElementById('fir').textContent = first_btn;
+        document.getElementById('sec').textContent = sec_btn;
+        document.getElementById('thir').textContent = thir_btn;
+
+        
+
+    });
+
+    var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+};
+</script>
+
+</html>

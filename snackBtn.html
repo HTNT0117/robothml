@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Pepper Recommender</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="googlebot" content="noindex, nofollow">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body  onload="subscribe_PepperQiMessaging();">
+    <div id="container" id='toDialog'>
+
+        <div class="flex-area">
+            <div class="flex-top" onclick="previous_topic()">
+                <i style="color:#0081AF;" class="fa-solid fa-angle-left fa-6x"></i>
+                <p style="color:#0081AF; margin-top:38px;">Go to Previous Question</p>
+            </div>
+            <button class="custom-stop-btn top-button" onclick="stopTalking()"> 
+                Stop Talking
+            </button>
+        </div>
+
+        
+        <div align="center" style="margin-bottom:5%;">
+            <h1 id="display" class="smallHeadline" >Which snack do you want?</h1>
+        </div>
+        <div class="flex-area" style="margin-bottom:1%;">
+            <button  id="fir" class="custom-mul-btn"  onclick="first_ans(); "> 
+                Chocolate & Vanilla Swirl 
+            </button>
+    
+            <button id="sec" class="custom-mul-btn" onclick="sen_ans()"> 
+                Not-Peanut Butter Cookie
+            </button>
+
+            <button  id="thir" class="custom-mul-btn"  onclick="thir_ans(); "> 
+                Flapjack
+            </button>
+
+            <button  id="four" class="custom-mul-btn"  onclick="four_ans(); "> 
+                Hazelnut Friand
+            </button>
+        
+            <button  id="five" class="custom-mul-btn"  onclick="five_ans(); "> 
+                Raspberry and Blueberry Brownie
+            </button>
+        </div>
+        <div class="flex-area">
+            <button  id="six" class="custom-mul-btn"  onclick="six_ans(); "> 
+                Blueberry Muffin
+            </button>
+
+            <button  id="seven" class="custom-mul-btn"  onclick="sev_ans(); "> 
+                Double Chocolate Muffin
+            </button>
+
+            <button  id="eight" class="custom-mul-btn"  onclick="eig_ans(); "> 
+                Fruits
+            </button>
+
+            <button  id="nine" class="custom-mul-btn"  onclick="nin_ans(); "> 
+                Ham and Cheese Croissant
+            </button>
+
+            <button  id="ten" class="custom-mul-btn"  onclick="ten_ans(); "> 
+                Choose for me
+            </button>
+
+        </div>
+    </div>
+    
+    <footer>
+    </footer>
+    <script src="https://kit.fontawesome.com/54a1468923.js" crossorigin="anonymous"></script>
+    <script src="js/robotutils.qim1.js"></script>
+    <script src="/libs/qimessaging/2/qimessaging.js"></script>
+    <script src="js/jquery-1.11.0.min.js"></script>
+    <script src="js/robotutils.js"></script>
+    <script src="js/main.js"></script>
+
+</body>
+
+</html>
